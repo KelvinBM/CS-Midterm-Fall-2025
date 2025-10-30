@@ -22,26 +22,26 @@ using namespace std;
 
 int main() {
     char decision;
+
     string key;
-    vector<string> keys;
     string encryptedText;
+
+    vector<char> uniqueLetters;
+    vector<char> encryptedTextLetters;
     string strUniqueLetters;
-    string decryptedTextLowered;
     string currWord;
-    bool isDecrypted = false;
 
     vector<int> keyShifts;
-    vector<char> uniqueLetters;
-    vector<char> lettersToDecryptOnly;
     vector<int> letterRate;
+    vector<int> freqDistrOfIntervals;
     vector<string> wordsOfEncryptedText;
 
     char currLetter;
     int currLetterCounter;
     int currRate;
+    int currFrequency;
+    int currFreqDistr;// subtract from text as if key//  ciphertext.at(i) = ((plaintext.at(i) - 'A') - currFreqDistr) % 26 + 'A';
 
-    char shiftedLetter;
-    int keyToShiftBy;
 
     int i;
     int j;
@@ -70,9 +70,7 @@ int main() {
                 uniqueLetters.push_back(encryptedText.at(i));
                 strUniqueLetters.push_back(encryptedText.at(i));
             }
-        }
-        if (isalpha(encryptedText.at(i)) || encryptedText.at(i) == '\n') {
-            lettersToDecryptOnly.push_back(encryptedText.at(i));
+            encryptedTextLetters.push_back(encryptedText.at(i));
         }
     }
 
@@ -89,11 +87,9 @@ int main() {
             }
         }
         currRate = currLetterCounter; /// (double)sentence.length();
-        if (strUniqueLetters.find(uniqueLetters.at(i)) == string::npos) {
-            letterRate.push_back(currRate);
-        }
+        letterRate.push_back(currRate);
 
-        cout << "  " << currLetter << ": " << currRate << endl;
+        cout << "  " << currLetter << ": " << letterRate.at(i) << endl;
     }
     cout << endl;
 
@@ -101,80 +97,32 @@ int main() {
     ///                                     DECRPYTING                                     ///
     //////////////////////////////////////////////////////////////////////////////////////////
 
-    cout << "Would you like to input the key or read multiple keys from a text file?" << endl;
-    cout << "Enter [I] to input key or [R] to read keys: ";
-    cin >>decision;
+    /////////////////////////////////////////////////////
+    // figure out difference between rates and use     //
+    // such difference to determine length of key word //
+    /////////////////////////////////////////////////////
 
-    if (islower(decision)) {
-        decision = toupper(decision);
+    for (i = 0; i < letterRate.size(); i++) {
+        for (j = 0; j < letterRate.size(); j++) {
+            if (letterRate.at(i) - letterRate.at(j) != 0) {
+                freqDistrOfIntervals.push_back(abs(letterRate.at(i) - letterRate.at(j)));
+                cout << abs(letterRate.at(i) - letterRate.at(j)) << ", ";
+            }
+        }
+        cout << endl;
     }
+    cout << endl << endl;
 
-    if (decision == 'R') {
-        ifstream keysFile("C:\\Users\\Kelvi\\Desktop\\CCNY\\CSC 103 - Computer Science\\Projects\\Cryptography\\text\\keys.txt");
-
-        while (getline(keysFile, lineText))
-        {
-            // cout << lineText << '\n';
-            keys.push_back(lineText + '\n');
+    for (i = 0; i < encryptedTextLetters.size(); i++) {
+        for (k = 'A'; k < 'Z'; k++) {
+            cout << char(((encryptedTextLetters.at(i) - k) + 'A') % 26 + 'A');
         }
-        keysFile.close();
-
-        for (k = 0; k < keys.size(); k++) {
-            key = keys.at(k);
-
-            keyShifts.resize(key.size());
-            for (i = 0; i < key.size(); i++) {
-                if (islower(key.at(i))) {
-                    keyShifts.at(i) = (toupper(key.at(i)));
-                } else {
-                    keyShifts.push_back(key.at(i));
-                }
-                //cout << keyShifts.at(i) << " ";
-            }
-            cout << endl;
-
-            // WORK ON DECRYPTING //
-            for (i = 0; i < lettersToDecryptOnly.size(); i++) {
-                currLetter = lettersToDecryptOnly.at(i);
-                keyToShiftBy = keyShifts.at(i % key.size());
-
-                shiftedLetter = (((lettersToDecryptOnly.at(i) - keyToShiftBy) + 'A') % 26) + 'A';
-                cout << shiftedLetter;
-                //cout << keyToShiftByIndex << endl;
-            }
-            cout << endl << endl;
-        }
-    } else if (decision == 'I') {
-        cout << "Enter key or enter 'E' to END program: ";
-        cin >> key;
-
-        while (key != "E") {
-            keyShifts.resize(key.size());
-            for (i = 0; i < key.size(); i++) {
-                if (islower(key.at(i))) {
-                    keyShifts.at(i) = (toupper(key.at(i)));
-                } else {
-                    keyShifts.push_back(key.at(i));
-                }
-                //cout << keyShifts.at(i) << " ";
-            }
-            cout << endl;
-
-            // WORK ON DECRYPTING //
-            for (i = 0; i < lettersToDecryptOnly.size(); i++) {
-                currLetter = lettersToDecryptOnly.at(i);
-
-                keyToShiftBy = keyShifts.at(i % key.size());
-
-                shiftedLetter = (((lettersToDecryptOnly.at(i) - 'A') + keyToShiftBy) % 26) + 'A';
-                cout << shiftedLetter;
-                //cout << keyToShiftByIndex << endl;
-            }
-            cout << endl << endl;
-            cout << "Enter key:";
-            cin >> key;
-        }
+        cout << endl << endl;
     }
+    cout << endl;
+
+
+
 
     return 0;
 }
