@@ -1,7 +1,7 @@
 /*
  *  Resorted to:
  *      - Week 7's resource replit file for encrypting using Ceaser's cypher
- *      - c++ file I made that includes notes from Zybooks(eg. methods and data types)
+ *      - c++ file I made that includes notes from Zybooks(e.g. methods and data types)
  *      - Video on polyalphabetic cypher: https://www.youtube.com/watch?v=BgFJD7oCmDE&list=PLSQl0a2vh4HA50QhFIirlEZRXG4yjcoGM&index=7
  *      - w3schools page for instructions on gathering content from text files: https://www.w3schools.com/cpp/cpp_files.asp
  *      - I searched "c++ file not found when trying to read text file" to figure out why the text file wasn't
@@ -53,6 +53,7 @@ int main() {
 
     while (getline(EncryptedTextFile, lineText)) {
         encryptedText.append(lineText + " ");
+        //cout << lineText << endl;
     }
     EncryptedTextFile.close();
 
@@ -89,18 +90,17 @@ int main() {
             }
         }
         currRate = currLetterCounter; /// (double)sentence.length();
-        if (strUniqueLetters.find(uniqueLetters.at(i)) == string::npos) {
-            letterRate.push_back(currRate);
-        }
+        letterRate.push_back(currRate);
 
-        cout << "  " << currLetter << ": " << currRate << endl;
+        cout << "  " << currLetter << ": " << letterRate.at(i) << endl;
     }
     cout << endl;
+
 
     //////////////////////////////////////////////////////////////////////////////////////////
     ///                                     DECRPYTING                                     ///
     //////////////////////////////////////////////////////////////////////////////////////////
-
+    /*
     cout << "Would you like to input the key or read multiple keys from a text file?" << endl;
     cout << "Enter [I] to input key or [R] to read keys: ";
     cin >>decision;
@@ -138,11 +138,12 @@ int main() {
                 currLetter = lettersToDecryptOnly.at(i);
                 keyToShiftBy = keyShifts.at(i % key.size());
 
-                shiftedLetter = (((lettersToDecryptOnly.at(i) - keyToShiftBy) + 'A') % 26) + 'A';
+                shiftedLetter = (((currLetter + 'A') - keyToShiftBy) % 26) + 'A';
                 cout << shiftedLetter;
                 //cout << keyToShiftByIndex << endl;
             }
             cout << endl << endl;
+
         }
     } else if (decision == 'I') {
         cout << "Enter key or enter 'E' to END program: ";
@@ -166,7 +167,7 @@ int main() {
 
                 keyToShiftBy = keyShifts.at(i % key.size());
 
-                shiftedLetter = (((lettersToDecryptOnly.at(i) - 'A') + keyToShiftBy) % 26) + 'A';
+                shiftedLetter = (((currLetter - 'A') + keyToShiftBy) % 26) + 'A';
                 cout << shiftedLetter;
                 //cout << keyToShiftByIndex << endl;
             }
@@ -175,6 +176,21 @@ int main() {
             cin >> key;
         }
     }
+    */
+    // shift based on letter rate
+    for (i = 0; i < letterRate.size(); i++) {
+        currRate = letterRate.at(i);
+        for (j = 0; j < lettersToDecryptOnly.size(); j++) {
+            if (j % currRate == 0) {
+                cout << "Orig: " << lettersToDecryptOnly.at(j) << ", ";
+                cout << (char)((lettersToDecryptOnly.at(j) + currRate) % 26 + 'A');
+                cout << "\t|\t";
+            }
+        }
+        cout << endl;
+        cout << endl;
+    }
+
 
     return 0;
 }
