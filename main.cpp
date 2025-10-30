@@ -8,6 +8,8 @@
  *        being read and AI told me to use the absolute path to the file
  *          - From another search result, one tying to a stackOverflow thread I got the logic for veryfying if
  *            the given 'keys.txt' file was opened or not(NEED TO IMPLEMENT): https://stackoverflow.com/questions/30221785/reading-from-text-file-is-not-working-c
+ *
+ *      - This video helped me further understand the mathematics behind the Vigenere Cypher: https://www.youtube.com/watch?v=RCkGauRMs2A
  */
 
 
@@ -23,14 +25,16 @@ int main() {
     string key;
     vector<string> keys;
     string encryptedText;
-    string newSentence;
-    string decryptedText;
+    string strUniqueLetters;
     string decryptedTextLowered;
+    string currWord;
     bool isDecrypted = false;
 
     vector<int> keyShifts;
-    vector<char> letters;
+    vector<char> uniqueLetters;
+    vector<char> lettersToDecryptOnly;
     vector<int> letterRate;
+    vector<string> wordsOfEncryptedText;
 
     char currLetter;
     int currLetterCounter;
@@ -43,28 +47,40 @@ int main() {
     int j;
     int k;
 
+    // FILE WITH ENCRYPTED TEXT //
+    string lineText;
+    ifstream EncryptedTextFile("C:\\Users\\Kelvi\\Desktop\\CCNY\\CSC 103 - Computer Science\\Projects\\Cryptography\\text\\Decrypt-Team-8.txt");
+
+    while (getline(EncryptedTextFile, lineText)) {
+        encryptedText.append(lineText + " ");
+    }
+    EncryptedTextFile.close();
+
     // key;
     // getline(cin, sentence);
     cout << endl;
-    encryptedText = "TMXE EMLR AIHT PVZG BUEM TWEA PKLT JGWZ ANLD HFMI MQRM VOWB KZZA MLAS RXYU NZPT HTRU AWAH TJOI IIED UOBA SNFO HYDJ KMKF OILR KHVD UTVH";// +
+    //encryptedText = "TMXE EMLR AIHT PVZG BUEM TWEA PKLT JGWZ ANLD HFMI MQRM VOWB KZZA MLAS RXYU NZPT HTRU AWAH TJOI IIED UOBA SNFO HYDJ KMKF OILR KHVD UTVH";// +
                 // "NKHP CAWT UAQR WZEB NAIY AEJZ OIVW JKSW MNMP CNIE KUNZ HNDT RRXY MPCF EVVX AMPO SLSI FRNA HXBX JBRH CISV IZET HHSX BWKG SBUM FDME SAOH " +
                 // "IQTF CQWA HTBX EIQA EYEF WCRO QNHI SMIU IIMO TMXE EMLR AIHT PVZG BUEB XEMQ STSG JUVR UCIH TYXV EEJN ZTFL XYQJ TJQZ TVUX OHTW JTZV EFEV " +
                 // "WJKW RZDE LAAX W";
 
     for (i = 0; i < encryptedText.size(); i++) {
-        if (isalpha(encryptedText[i])) {
-            if (newSentence.find(encryptedText.at(i)) == string::npos) {
-                newSentence.push_back(encryptedText.at(i));
-                letters.push_back(encryptedText.at(i));
+        if (isalpha(encryptedText.at(i))) {
+            if (strUniqueLetters.find(encryptedText.at(i)) == string::npos) {
+                uniqueLetters.push_back(encryptedText.at(i));
+                strUniqueLetters.push_back(encryptedText.at(i));
             }
+        }
+        if (isalpha(encryptedText.at(i)) || encryptedText.at(i) == '\n') {
+            lettersToDecryptOnly.push_back(encryptedText.at(i));
         }
     }
 
     // letter comparisons
     // DECRYPTING //
     cout << "Letter Rates:" << endl;
-    for (i = 0; i < letters.size(); i++) {
-        currLetter = letters.at(i);
+    for (i = 0; i < uniqueLetters.size(); i++) {
+        currLetter = uniqueLetters.at(i);
         currLetterCounter = 0;
 
         for (j = 0; j < encryptedText.size(); j++) {
@@ -73,7 +89,7 @@ int main() {
             }
         }
         currRate = currLetterCounter; /// (double)sentence.length();
-        if (newSentence.find(letters.at(i)) == string::npos) {
+        if (strUniqueLetters.find(uniqueLetters.at(i)) == string::npos) {
             letterRate.push_back(currRate);
         }
 
@@ -81,94 +97,82 @@ int main() {
     }
     cout << endl;
 
+    //////////////////////////////////////////////////////////////////////////////////////////
+    ///                                     DECRPYTING                                     ///
+    //////////////////////////////////////////////////////////////////////////////////////////
+
     cout << "Would you like to input the key or read multiple keys from a text file?" << endl;
     cout << "Enter [I] to input key or [R] to read keys: ";
     cin >>decision;
 
     if (islower(decision)) {
         decision = toupper(decision);
-    } else {
-        if (decision == 'R') {
-            string lineText;
-            ifstream keysFile("C:\\Users\\Kelvi\\Desktop\\CCNY\\CSC 103 - Computer Science\\Projects\\Cryptography\\text\\keys.txt");
+    }
 
-            while (getline(keysFile, lineText))
-            {
-                // cout << lineText << '\n';
-                keys.push_back(lineText);
-            }
-            keysFile.close();
+    if (decision == 'R') {
+        ifstream keysFile("C:\\Users\\Kelvi\\Desktop\\CCNY\\CSC 103 - Computer Science\\Projects\\Cryptography\\text\\keys.txt");
 
-            for (k = 0; k < keys.size(); k++) {
-                key = keys.at(k);
+        while (getline(keysFile, lineText))
+        {
+            // cout << lineText << '\n';
+            keys.push_back(lineText + '\n');
+        }
+        keysFile.close();
 
-                keyShifts.resize(key.size());
-                for (i = 0; i < key.size(); i++) {
-                    if (islower(key.at(i))) {
-                        keyShifts.at(i) = (toupper(key.at(i)));
-                    } else {
-                        keyShifts.push_back(key.at(i));
-                    }
-                    //cout << keyShifts.at(i) << " ";
+        for (k = 0; k < keys.size(); k++) {
+            key = keys.at(k);
+
+            keyShifts.resize(key.size());
+            for (i = 0; i < key.size(); i++) {
+                if (islower(key.at(i))) {
+                    keyShifts.at(i) = (toupper(key.at(i)));
+                } else {
+                    keyShifts.push_back(key.at(i));
                 }
-                cout << endl;
-
-                // WORK ON DECRYPTING //
-                decryptedText = "";
-                for (i = 0; i < newSentence.size(); i++) {
-                    currLetter = newSentence.at(i);
-                    if (!isalpha(currLetter)) {
-                        continue;
-                    }
-                    keyToShiftBy = keyShifts.at(i % key.size());
-
-                    if (isalpha(currLetter)) {
-                        shiftedLetter = (((newSentence.at(i) - 'A') + keyToShiftBy) % 26) + 'A';
-                        cout << shiftedLetter;
-                    } else {
-                        cout << currLetter;
-                    }
-                    //cout << keyToShiftByIndex << endl;
-                }
-                cout << endl << endl;
+                //cout << keyShifts.at(i) << " ";
             }
-        } else if (decision == 'I') {
-            cout << "Enter key or enter 'E' to END program: ";
+            cout << endl;
+
+            // WORK ON DECRYPTING //
+            for (i = 0; i < lettersToDecryptOnly.size(); i++) {
+                currLetter = lettersToDecryptOnly.at(i);
+                keyToShiftBy = keyShifts.at(i % key.size());
+
+                shiftedLetter = (((lettersToDecryptOnly.at(i) - keyToShiftBy) + 'A') % 26) + 'A';
+                cout << shiftedLetter;
+                //cout << keyToShiftByIndex << endl;
+            }
+            cout << endl << endl;
+        }
+    } else if (decision == 'I') {
+        cout << "Enter key or enter 'E' to END program: ";
+        cin >> key;
+
+        while (key != "E") {
+            keyShifts.resize(key.size());
+            for (i = 0; i < key.size(); i++) {
+                if (islower(key.at(i))) {
+                    keyShifts.at(i) = (toupper(key.at(i)));
+                } else {
+                    keyShifts.push_back(key.at(i));
+                }
+                //cout << keyShifts.at(i) << " ";
+            }
+            cout << endl;
+
+            // WORK ON DECRYPTING //
+            for (i = 0; i < lettersToDecryptOnly.size(); i++) {
+                currLetter = lettersToDecryptOnly.at(i);
+
+                keyToShiftBy = keyShifts.at(i % key.size());
+
+                shiftedLetter = (((lettersToDecryptOnly.at(i) - 'A') + keyToShiftBy) % 26) + 'A';
+                cout << shiftedLetter;
+                //cout << keyToShiftByIndex << endl;
+            }
+            cout << endl << endl;
+            cout << "Enter key:";
             cin >> key;
-
-            while (key != "E") {
-                keyShifts.resize(key.size());
-                for (i = 0; i < key.size(); i++) {
-                    if (islower(key.at(i))) {
-                        keyShifts.at(i) = (toupper(key.at(i)));
-                    } else {
-                        keyShifts.push_back(key.at(i));
-                    }
-                    //cout << keyShifts.at(i) << " ";
-                }
-                cout << endl;
-
-                // WORK ON DECRYPTING //
-                decryptedText = "";
-                for (i = 0; i < newSentence.size(); i++) {
-                    currLetter = newSentence.at(i);
-                    if (!isalpha(currLetter)) {
-                        continue;
-                    }
-                    keyToShiftBy = keyShifts.at(i % key.size());
-
-                    if (isalpha(currLetter)) {
-                        shiftedLetter = (((newSentence.at(i) - 'A') + keyToShiftBy) % 26) + 'A';
-                        cout << shiftedLetter;
-                    } else {
-                        cout << currLetter;
-                    }
-                    //cout << keyToShiftByIndex << endl;
-                }
-                cout << endl << endl;
-                cout << "Enter key:";
-                cin >> key;
-            }
         }
     }
 
