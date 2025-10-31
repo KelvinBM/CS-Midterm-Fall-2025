@@ -345,7 +345,7 @@ int main()
             letterRate.push_back(currRate);
 
             cout << "  " << currLetter << ": " << letterRate.at(i) << endl;
-            this_thread::sleep_for(1s); // sleeps for one second
+            //this_thread::sleep_for(1s); // sleeps for one second
         }
         cout << endl;
 
