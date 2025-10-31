@@ -34,7 +34,6 @@ int main()
         random = abs((t - 3245679890856789121) / (t * 50)) % 26;
         randomNum.at(i) = random;
         this_thread::sleep_for(chrono::milliseconds(1));
-        // cout << randomNum.at(i) << " ";
     }
     cout << endl;
 
@@ -53,5 +52,31 @@ int main()
         }
     }
 
-    cout << "Encrypted Message: " << message << endl;
+    cout << "Encrypted Message: " << message << endl << endl;
+
+    // decryption
+
+    cout << "Key: ";
+
+    for (int i = 0; i < randomNum.size(); i++)
+    {
+        cout << randomNum.at(i) << " ";
+    }
+
+    cout << endl << endl;
+
+    count = 0;
+    for (int i = 0; i < message.size(); i++)
+    {
+        charNum = static_cast<int>(message[i]);
+        shift = charNum - randomNum.at(count);
+
+        if (isalpha(message[i]))
+        {
+            message[i] = static_cast<char>(((shift - 'a') % 26) + 'a');
+            count += 1;
+        }
+    }
+
+    cout << "Decrypted Message: " << message << endl;
 }
