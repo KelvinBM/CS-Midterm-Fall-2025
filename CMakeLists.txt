@@ -3,4 +3,6 @@ project(Cryptography)
 
 set(CMAKE_CXX_STANDARD 20)
 
-add_executable(Cryptography main.cpp)
+add_executable(Cryptography main.cpp
+        text/zybooks_notes.cpp
+)
