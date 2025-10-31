@@ -52,7 +52,9 @@ int main() {
     char shiftedLetter;
     char keyLetterToShiftBy;
     int keyLetterCorrespondingShift;
-    int indexOfKeyLetter;
+    int keyLetterAssignedNum;
+    int currLetterAssignedNum;
+    int indexOfShiftedLetter;
 
     int i;
     int j;
@@ -61,9 +63,10 @@ int main() {
     string alphabet;
     vector<int> alphabetCorrespondingShift;
 
+
     // FILE WITH ENCRYPTED TEXT //
     string lineText;
-    ifstream EncryptedTextFile("C:\\Users\\Kelvi\\Desktop\\CCNY\\CSC 103 - Computer Science\\Projects\\Cryptography\\text\\Decrypt-Team-8.txt");
+    ifstream EncryptedTextFile("C:\\Users\\Kelvi\\Desktop\\CCNY\\CSC 103 - Computer Science\\Projects\\Cryptography\\text\\Decrypt-Team-8.txt");// path to where my file is
 
     while (getline(EncryptedTextFile, lineText)) {
         encryptedText.append(lineText + " ");
@@ -132,16 +135,17 @@ int main() {
     }
 
     if (decision == 'R') {
-        ifstream keysFile("C:\\Users\\Kelvi\\Desktop\\CCNY\\CSC 103 - Computer Science\\Projects\\Cryptography\\text\\keys.txt");
+        ifstream keysFile("C:\\Users\\Kelvi\\Desktop\\CCNY\\CSC 103 - Computer Science\\Projects\\Cryptography\\text\\keys.txt");// path to where my file is
 
         // getting the keys to try out //
         while (getline(keysFile, lineText))
         {
             // cout << lineText << '\n';
-            keys.push_back(lineText + '\n');
+            keys.push_back(lineText);
         }
         keysFile.close();
         cout << endl << endl << keys.size() << endl << endl;
+
         for (k = 0; k < keys.size(); k++) {
             key = keys.at(k);
 
@@ -154,24 +158,22 @@ int main() {
                 }
                 cout << (char)keyShiftLetters.at(i) << " ";
             }
-            //cout << endl;
+            cout << endl;
             cout << "Current Key:  " << key << endl;
             // WORK ON DECRYPTING //
             for (i = 0; i < lettersToDecryptOnly.size(); i++) {
                 currLetter = lettersToDecryptOnly.at(i);
+                currLetterAssignedNum = alphabet.find(currLetter);
+
                 keyLetterToShiftBy = keyShiftLetters.at(i % key.size());
+                keyLetterAssignedNum = alphabet.find(keyLetterToShiftBy);
 
-                indexOfKeyLetter = alphabet.find(keyLetterToShiftBy);
-                if (indexOfKeyLetter < 0) {
-                    continue;
-                }
-
-                keyLetterCorrespondingShift = alphabetCorrespondingShift.at(indexOfKeyLetter);
+                keyLetterCorrespondingShift = alphabetCorrespondingShift.at(keyLetterAssignedNum);
                 //cout << "" << indexOfKeyLetter << ", ";
 
                 shiftedLetter = (((currLetter - keyLetterCorrespondingShift) + 'A') % 26) + 'A';
                 cout << shiftedLetter;
-                //cout << keyToShiftByIndex << endl;
+                //cout << keyLetterAssignedNum << endl;
             }
             cout << endl << endl;
 
@@ -186,41 +188,33 @@ int main() {
                 if (islower(key.at(i))) {
                     keyShiftLetters.at(i) = (toupper(key.at(i)));
                 } else {
-                    keyShiftLetters.push_back(key.at(i));
+                    keyShiftLetters.at(i) = key.at(i);
                 }
-                //cout << keyShifts.at(i) << " ";
+                cout << (char)keyShiftLetters.at(i) << " ";
             }
             cout << endl;
-
+            cout << "Current Key:  " << key << endl;
             // WORK ON DECRYPTING //
             for (i = 0; i < lettersToDecryptOnly.size(); i++) {
                 currLetter = lettersToDecryptOnly.at(i);
-                keyLetterToShiftBy = keyShiftLetters.at(i % key.size());
+                currLetterAssignedNum = alphabet.find(currLetter);
 
-                shiftedLetter = (((currLetter - 'A') + keyLetterCorrespondingShift) % 26) + 'A';
+                keyLetterToShiftBy = keyShiftLetters.at(i % key.size());
+                keyLetterAssignedNum = alphabet.find(keyLetterToShiftBy);
+
+                keyLetterCorrespondingShift = alphabetCorrespondingShift.at(keyLetterAssignedNum);
+                //cout << "" << indexOfKeyLetter << ", ";
+
+                shiftedLetter = (((currLetter - keyLetterCorrespondingShift) + 'A') % 26) + 'A';
                 cout << shiftedLetter;
-                //cout << keyToShiftByIndex << endl;
+                //cout << keyLetterAssignedNum << endl;
             }
             cout << endl << endl;
+            //cout << endl << endl;
             cout << "Enter key:";
             cin >> key;
         }
     }
-
-    // shift based on letter rate
-    /* for (i = 0; i < letterRate.size(); i++) {
-        currRate = letterRate.at(i);
-        for (j = 0; j < lettersToDecryptOnly.size(); j++) {
-            if (j % currRate == 0) {
-                cout << "Orig: " << lettersToDecryptOnly.at(j) << ", ";
-                cout << (char)((lettersToDecryptOnly.at(j) + currRate) % 26 + 'A');
-                cout << "\t|\t";
-            }
-        }
-        cout << endl;
-        cout << endl;
-    } */
-
 
     return 0;
 }
