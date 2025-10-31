@@ -18,8 +18,9 @@
  *        try and figure out what is wrong with my program's logic: https://www.boxentriq.com/code-breaking/vigenere-cipher
  *
  *      - This site to get real english words to compare with the decrypted text
- *      - This stackOverflow thread helps use the sleep() function: https://stackoverflow.com/questions/4184468/sleep-for-milliseconds
+ *      - This stackOverflow thread helps use the sleep_for() function: https://stackoverflow.com/questions/4184468/sleep-for-milliseconds
  *
+
  */
 
 
@@ -27,23 +28,43 @@
 #include <fstream>
 #include <string>
 #include <vector>
+#include <chrono>
+#include <thread>
 
 using namespace std;
+using namespace chrono_literals;
 
 int main() {
 
     int decisionOfProgram;
+    int isDecision = false;
 
     cout << "What would you like to do today:" << endl;
     cout << "\tEnter [1] to Encrypt" << endl;
     cout << "\tEnter [2] to Decrypt" << endl;
 
-    cout << endl << "Your Choice: ";
-    cin >> decisionOfProgram;
+    while (isDecision == false) {
+        cout << endl << "Your Choice: ";
+        cin >> decisionOfProgram;
 
-    if (decisionOfProgram == 1) {
+        if (decisionOfProgram == 1) {
+            isDecision = true;
+        } else if (decisionOfProgram == 2) {
+            isDecision = true;
+        } else {
+            cout << "* Please enter a valid choice" << endl;
+        }
+    }
 
-    } else if (decisionOfProgram == 2) {
+
+
+
+    if (decisionOfProgram == 1) {// ENCRYPTION //
+
+
+
+
+    }else if (decisionOfProgram == 2) {// DECRYPTION //
 
         char decision;
         string key;
@@ -133,9 +154,9 @@ int main() {
 
         // letter comparisons
         // DECRYPTING //
-        cout << "Letter Rates:" << endl;
-        for (i = 0; i < uniqueLetters.size(); i++) {
-            currLetter = uniqueLetters.at(i);
+        cout << "Letter Rates Of Encrypted Text:" << endl;
+        for (i = 0; i < alphabet.size(); i++) { // to print out
+            currLetter = alphabet.at(i);
             currLetterCounter = 0;
 
             for (j = 0; j < encryptedText.size(); j++) {
@@ -147,21 +168,34 @@ int main() {
             letterRate.push_back(currRate);
 
             cout << "  " << currLetter << ": " << letterRate.at(i) << endl;
+            //this_thread::sleep_for(1s);// sleeps for one second
         }
         cout << endl;
-
 
         //////////////////////////////////////////////////////////////////////////////////////////
         ///                                     DECRPYTING                                     ///
         //////////////////////////////////////////////////////////////////////////////////////////
 
         cout << "Would you like to input the key or read multiple keys from a text file?" << endl;
-        cout << "Enter [I] to input key or [R] to read keys: ";
-        cin >>decision;
 
-        if (islower(decision)) {
-            decision = toupper(decision);
+        isDecision = false;
+        while (isDecision == false) {
+            cout << "Enter [I] to input key or [R] to read keys: ";
+            cin >>decision;
+
+            if (islower(decision)) {
+                decision = toupper(decision);
+            }
+
+            if (decision == 'R') {
+                isDecision = true;
+            } else if (decision == 'I') {
+                isDecision = true;
+            } else {
+                cout << "* Please enter a valid choice" << endl;
+            }
         }
+
 
         if (decision == 'R') {
             ifstream keysFile("C:\\Users\\Kelvi\\Desktop\\CCNY\\CSC 103 - Computer Science\\Projects\\Cryptography\\text\\keys.txt");// path to where my file is
@@ -173,7 +207,7 @@ int main() {
                 keys.push_back(lineText);
             }
             keysFile.close();
-            cout << endl << endl << keys.size() << endl << endl;
+            //cout << endl << endl << keys.size() << endl << endl; // for testing
 
             for (k = 0; k < keys.size(); k++) {
                 decryptedText = "";
@@ -186,9 +220,9 @@ int main() {
                     } else {
                         keyShiftLetters.at(i) = key.at(i);
                     }
-                    cout << static_cast<char>(keyShiftLetters.at(i)) << " ";
+                    //cout << static_cast<char>(keyShiftLetters.at(i)) << " ";// for testing
                 }
-                cout << endl;
+                //cout << endl; // used in conjunction with cout from above(for testing)
                 //cout << "Current Key:  " << key << endl;// for testing
 
                 // WORK ON DECRYPTING //
@@ -207,7 +241,7 @@ int main() {
                     decryptedText.push_back(shiftedLetter);
                     //cout << keyLetterAssignedNum << endl; // for testing
                 }
-                cout << endl << endl;
+                //cout << endl << endl;// used in conjunction with other line for testing
 
                 gradeCount = 0;
                 for (i = 0; i < realEnglishWords.size(); i++) {
@@ -241,10 +275,10 @@ int main() {
                     } else {
                         keyShiftLetters.at(i) = key.at(i);
                     }
-                    cout << (char)keyShiftLetters.at(i) << " ";
+                    //cout << (char)keyShiftLetters.at(i) << " ";
                 }
-                cout << endl;
-                cout << "Current Key:  " << key << endl;
+                // cout << endl;// for testing
+                // cout << "Current Key:  " << key << endl;// for testing
                 // WORK ON DECRYPTING //
                 for (i = 0; i < lettersToDecryptOnly.size(); i++) {
                     currLetter = lettersToDecryptOnly.at(i);
