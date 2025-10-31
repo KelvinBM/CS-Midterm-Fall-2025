@@ -5,10 +5,10 @@
 // Week 7 Zybooks brushup
 // Caesar shift encryption: https://replit.com/@mab253/ceaser-encrypt#main.cpp
 // Caesar shift decryption: https://replit.com/@mab253/caesar-decrypt#main.cpp used for understanding the math behind decryption
-
-
-
-
+// Video on vowel or consonant: https://www.youtube.com/watch?v=7tU1mn6gCdU I used this to get a general understanding of how to structure my score system, and the vowels really made it easy!
+// Video on randomness: https://www.youtube.com/watch?v=kRCmR4qr-hQ I used this to help develop the psuedo random LCG, it actually explained the concept really well!
+// Wiki(I know, not the best source) article on LCG's: https://en.wikipedia.org/wiki/Linear_congruential_generator This is where I actually decided to test some of those famously working values, and I struck gold with this one honestly.
+// Disclaimer: I did most testing of my code on vscode before implementing on zybooks, just to clarify!
 
 
 
@@ -41,22 +41,22 @@ int main(){
 
         string cleanedCipher = "";
 
-        for(int i = 0; i < cipherText.length(); i++){
+        for(int i = 0; i < cipherText.length(); i++){ //purpose is to remove spaces mostly
             if(isalpha(cipherText[i])){ // Doing this to confirm that it is a letter!
-                char upperCase = toupper(cipherText[i]); // Converts it to uppercase
+                char upperCase = toupper(cipherText[i]); // Converts the specific character to uppercase
                cleanedCipher += upperCase; // Transfers the cleaned up cipher text to the cleanedCipher variable
            }
 
         }
 
-        int alphabet[26]; // From letters A-Z
+        int alphabet[26]; // 26 numbers, supposed to represent A-Z
 
-        for(int i = 0; i < 26; i++){
+        for(int i = 0; i < 26; i++){ 
           alphabet[i] = 0;
         }
 
-        for(int i = 0; i < cleanedCipher.length(); i++){
-         int scope = cleanedCipher[i] - 'A'; // Keeps our values within the alphabet
+        for(int i = 0; i < cleanedCipher.length(); i++){ //This loop is to goes through the entirety of the ciphertext and assigns each letter with a num
+         int scope = cleanedCipher[i] - 'A'; 
          if(0 <= scope && scope < 26){
                 alphabet[scope]++;
             }
@@ -64,7 +64,7 @@ int main(){
 
         cout << "Letter Frequency(A-Z): " << endl;
         for(int i = 0; i < 26; i++){
-           char letter = char(i + 'A');
+           char letter = char(i + 'A'); //this loops and creates a chart for how many times each letter pop uo!
           cout << letter << ": " << alphabet[i];
              if(i % 6 == 5){ // To ensure there are around 6 letters per row; Formatting!
               cout << endl;
@@ -104,9 +104,10 @@ int main(){
 
              }
 
-            int score = 0; //Implementation of the score system and counting how many times THE appears instead of vowels. Seems a bit cleaner!
-             for(int i = 0; i < plainText.length() - 2; i++){
-                if(plainText[i] == 'T' && plainText[i + 1] == 'H' && plainText[i + 2] == 'E'){ 
+            int score = 0; //Implementation of the score system and counting how many times vowels appear. I tried other ways, but this honestly best suited my program personally
+             for(int i = 0; i < plainText.length(); i++){
+                char c = plainText[i];
+                if(c == 'A' || c == 'E' || c == 'I' || c == 'O' || c == 'U'){ 
                     score++;
                 }
         }
@@ -119,7 +120,7 @@ int main(){
 
         cout << "\nKey " << key << endl;
         cout << "Preview: ";
-        for(int y = 0; y < 80 && y < plainText.length(); y++){
+        for(int y = 0; y < 80 && y < plainText.length(); y++){ // Testing each keys entry against our ciphertext and decrypts it!!! :D
             cout << plainText[y];
         } 
         cout << "... \n";
@@ -138,23 +139,23 @@ int main(){
 
         cout << "Decrypted Plaintext: " << endl;
         cout << bestPlain << endl;
-    } else if(usersChoiceValueForEitherOneOrTwo == 2){
-        cout << "Enter 1 to encrypt or 2 to decrypt: ";
+    } else if(usersChoiceValueForEitherOneOrTwo == 2){ //regretting that variable name, but here we are :')
+        cout << "If you'd like to encrypt, enter 1. If you'd like to decrypt, enter 2: ";
         int valueTwo;
         cin >> valueTwo;
 
-        cout << "Enter your message: ";
+        cout << "Type anything you'd like: ";
         string message;
         getline(cin, message); // This first is the eat the input buffer than cin >> valueTwo leaves behind
         getline(cin, message); // This second ensures that it doesn't end at whitepscae, letting the user make spaces when entering their message
 
-        cout << "Enter any numeric key: ";
-        long long seed;
+        cout << "Type any key/seed(only numbers): ";
+        long long seed; //meant to hold the numerical value the user enters :)
         cin >> seed;
         value = seed;
 
         string result = "";
-        for(int i = 0; i < message.length(); i++){
+        for(int i = 0; i < message.length(); i++){ // this loop checks each individual letter in the message, then after finding the letter sizes, takes the number value and uses that for encryption/decryption
             char c = message[i];
             if(isalpha(c)){
                 char base;
@@ -164,20 +165,21 @@ int main(){
                     base = 'a';
                 }
                 int val = c - base;
-                int d = randVal() % 26;
+                int d = (randVal() % 26 + 26) % 26; //This is to make sure that d stays positive! I wanted to use abs(), but I experimented with some of the prior encrypt/decrypt examples we got and found this works too!(Caesar decrypt replit)
                 if(valueTwo == 1){
-                    val = (val + d) % 26; //Encryption!!!
+                    val = (val + d) % 26; //Encryption!!! 
                 }else if(valueTwo == 2){
-                    val = (val - d + 26) % 26; //Decryption!!!
+                    val = (val - d + 26) % 26; //Decryption!!! You can see that the d is being subtracted here, hence the problem I had before with making d: randval() % 26
 
                 }
-                result += char(base + val);
+                result += char(base + val); // since base is basically just 'a' or 'A', it takes the numerical value of either of those, adds it to val and converts it back to a letter eith the use of char!
             }else{
-                result += c;
+                result += c; // in the case that it isn't a letter, it just adds c with result
             }
         }
 
         if(valueTwo == 1){
+            cout << "Key/Seed: " << seed << endl;
             cout << "Encrypted text: " << result << endl;
         }else if (valueTwo == 2){
             cout << "Decrypted text: " << result << endl;
