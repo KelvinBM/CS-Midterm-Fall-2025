@@ -2,52 +2,56 @@
 #include <string>
 #include <cctype>
 #include <vector>
+#include <ctime>
+// https://stackoverflow.com/questions/4184468/sleep-for-milliseconds
+#include <chrono>
+#include <thread>
 using namespace std;
 
 int main()
 {
     int shift;
+    unsigned long long int random;
 
-    string message = "The boy walked down the street in a carefree way, playing without notice of what was about him. He didn't hear the sound of the car as his ball careened into the road. He took a step toward it, and in doing so sealed his fate.";
+    clock_t t = clock();
+    random = abs((t - 3245679890856789121) / (t * 50)) % 26;
 
-    cout
-        << "By how much would you like to shift?" << endl;
+    string message = "She wanted rainbow hair. That's what she told the hairdresser. It should be deep rainbow colors, too. She wasn't interested in pastel rainbow hair. She wanted it deep and vibrant so there was no doubt that she had done this on purpose.";
 
-    cin >> shift;
-
-    if (shift > 26)
+    int charCount = 0;
+    for (int i = 0; i < message.size(); i++)
     {
-        shift = shift - 26;
+        if (isalpha(message[i]) || message[i] == '.')
+        {
+            charCount += 1;
+        }
     }
-    if (shift < -26)
-    {
-        shift = shift + 26;
-    }
+    vector<int> randomNum(charCount);
 
-    for (unsigned int i = 0; i < message.size(); i++)
+    for (int i = 0; i < randomNum.size(); i++)
     {
-        int numChar = message[i];
+        t = clock();
+        random = abs((t - 3245679890856789121) / (t * 50)) % 26;
+        randomNum.at(i) = random;
+        this_thread::sleep_for(chrono::milliseconds(1));
+        // cout << randomNum.at(i) << " ";
+    }
+    cout << endl;
+
+    int count = 0;
+    int charNum;
+
+    for (int i = 0; i < message.size(); i++)
+    {
+        charNum = static_cast<int>(message[i]);
+        shift = charNum + randomNum.at(count);
+
         if (isalpha(message[i]))
         {
-            if (numChar + shift < static_cast<int>('a'))
-            {
-                int diff = static_cast<int>('a') - (numChar + shift);
-                message[i] = static_cast<char>(static_cast<int>('z') - diff);
-            }
-            else if (numChar + shift < static_cast<int>('A'))
-            {
-                int diff = static_cast<int>('A') - (numChar + shift);
-                message[i] = static_cast<char>(static_cast<int>('Z') - diff);
-            }
-            else
-            {
-                message[i] = static_cast<char>(static_cast<int>(message[i]) + shift);
-            }
-            cout << static_cast<int>(message[i]) << endl;
+            message[i] = static_cast<char>(((shift + 'a') % 26) + 'a');
+            count += 1;
         }
     }
 
-    cout << message << endl;
-
-    return 0;
+    cout << "Encrypted Message: " << message << endl;
 }
