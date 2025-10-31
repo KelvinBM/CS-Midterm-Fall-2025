@@ -17,6 +17,7 @@
  *      - This website that decrypts vigenere ciphered text so that I can figure out what it should look like at least so that I can
  *        try and figure out what is wrong with my program's logic: https://www.boxentriq.com/code-breaking/vigenere-cipher
  *
+ *      - This site to get real english words to compare with the decrypted text
  *
  *
  */
@@ -35,9 +36,8 @@ int main() {
     vector<string> keys;
     string encryptedText;
     string strUniqueLetters;
-    string decryptedTextLowered;
+    string decryptedText;
     string currWord;
-    bool isDecrypted = false;
 
     vector<int> keyShiftLetters;
     vector<char> uniqueLetters;
@@ -63,24 +63,39 @@ int main() {
     string alphabet;
     vector<int> alphabetCorrespondingShift;
 
+    vector<string> realEnglishWords;
+    vector<int> gradesOfEachKey;
+    int gradeCount;
+    int highestGrade;
+    int highestGradeIndex;
+
 
     // FILE WITH ENCRYPTED TEXT //
     string lineText;
-    ifstream EncryptedTextFile("C:\\Users\\Kelvi\\Desktop\\CCNY\\CSC 103 - Computer Science\\Projects\\Cryptography\\text\\Decrypt-Team-8.txt");// path to where my file is
+    ifstream EncryptedTextFile("C:\\Users\\Kelvi\\Desktop\\CCNY\\CSC 103 - Computer Science\\Projects\\Cryptography\\text\\Decrypt-Team-8.txt");// path to my file with encrypted text
 
     while (getline(EncryptedTextFile, lineText)) {
         encryptedText.append(lineText + " ");
-        //cout << lineText << endl;
+        //cout << lineText << endl; // for testing
     }
     EncryptedTextFile.close();
 
-    // key;
-    // getline(cin, sentence);
+
+    // ENGLISH WORDS //
+    ifstream RealEnglishWordsFile("C:\\Users\\Kelvi\\Desktop\\CCNY\\CSC 103 - Computer Science\\Projects\\Cryptography\\text\\EnglishWords.txt");// path to english words text file
+
+    while (getline(RealEnglishWordsFile, lineText)) {
+        for (i = 0; i < lineText.length(); i++) {
+            lineText[i] = toupper(lineText[i]);
+        }
+        realEnglishWords.push_back(lineText);
+        //cout << lineText << endl; // for testing
+    }
+    RealEnglishWordsFile.close();
+
+
     cout << endl;
-    //encryptedText = "TMXE EMLR AIHT PVZG BUEM TWEA PKLT JGWZ ANLD HFMI MQRM VOWB KZZA MLAS RXYU NZPT HTRU AWAH TJOI IIED UOBA SNFO HYDJ KMKF OILR KHVD UTVH";// +
-                // "NKHP CAWT UAQR WZEB NAIY AEJZ OIVW JKSW MNMP CNIE KUNZ HNDT RRXY MPCF EVVX AMPO SLSI FRNA HXBX JBRH CISV IZET HHSX BWKG SBUM FDME SAOH " +
-                // "IQTF CQWA HTBX EIQA EYEF WCRO QNHI SMIU IIMO TMXE EMLR AIHT PVZG BUEB XEMQ STSG JUVR UCIH TYXV EEJN ZTFL XYQJ TJQZ TVUX OHTW JTZV EFEV " +
-                // "WJKW RZDE LAAX W";
+
 
     for (i = 0; i < encryptedText.size(); i++) {
         if (isalpha(encryptedText.at(i))) {
@@ -98,7 +113,7 @@ int main() {
         alphabet.push_back(j);
         alphabetCorrespondingShift.push_back(i);
 
-        // cout << alphabet.at(i) << "  " << alphabetCorrespondingShift.at(i);
+        // cout << alphabet.at(i) << "  " << alphabetCorrespondingShift.at(i); // for testing
         // cout << endl;
     }
 
@@ -114,7 +129,7 @@ int main() {
                 currLetterCounter++;
             }
         }
-        currRate = currLetterCounter; /// (double)sentence.length();
+        currRate = currLetterCounter; /// (double)sentence.length(); // for testing
         letterRate.push_back(currRate);
 
         cout << "  " << currLetter << ": " << letterRate.at(i) << endl;
@@ -140,13 +155,14 @@ int main() {
         // getting the keys to try out //
         while (getline(keysFile, lineText))
         {
-            // cout << lineText << '\n';
+            // cout << lineText << '\n'; // for testing
             keys.push_back(lineText);
         }
         keysFile.close();
         cout << endl << endl << keys.size() << endl << endl;
 
         for (k = 0; k < keys.size(); k++) {
+            decryptedText = "";
             key = keys.at(k);
 
             keyShiftLetters.resize(key.size());
@@ -156,10 +172,11 @@ int main() {
                 } else {
                     keyShiftLetters.at(i) = key.at(i);
                 }
-                cout << (char)keyShiftLetters.at(i) << " ";
+                cout << static_cast<char>(keyShiftLetters.at(i)) << " ";
             }
             cout << endl;
-            cout << "Current Key:  " << key << endl;
+            //cout << "Current Key:  " << key << endl;// for testing
+
             // WORK ON DECRYPTING //
             for (i = 0; i < lettersToDecryptOnly.size(); i++) {
                 currLetter = lettersToDecryptOnly.at(i);
@@ -169,15 +186,35 @@ int main() {
                 keyLetterAssignedNum = alphabet.find(keyLetterToShiftBy);
 
                 keyLetterCorrespondingShift = alphabetCorrespondingShift.at(keyLetterAssignedNum);
-                //cout << "" << indexOfKeyLetter << ", ";
+                //cout << "" << indexOfKeyLetter << ", "; // for testing
 
-                shiftedLetter = (((currLetter - keyLetterCorrespondingShift) + 'A') % 26) + 'A';
-                cout << shiftedLetter;
-                //cout << keyLetterAssignedNum << endl;
+                shiftedLetter = ((currLetter - keyLetterCorrespondingShift + 'A') % 26) + 'A';
+                //cout << shiftedLetter;
+                decryptedText.push_back(shiftedLetter);
+                //cout << keyLetterAssignedNum << endl; // for testing
             }
             cout << endl << endl;
 
+            gradeCount = 0;
+            for (i = 0; i < realEnglishWords.size(); i++) {
+                if (decryptedText.find(realEnglishWords.at(i)) != string::npos) {
+                    gradeCount++;
+                }
+            }
+            gradesOfEachKey.push_back(gradeCount);
         }
+
+        highestGrade = 0;
+        for (i = 0; i < gradesOfEachKey.size(); i++) {
+            // cout << "Grade Of Key: " << keys.at(i) << ", " << gradesOfEachKey.at(i) << endl << endl; // for testing
+            if (gradesOfEachKey.at(i) > highestGrade) {
+                highestGrade = gradesOfEachKey.at(i);
+                highestGradeIndex = i;
+            }
+        }
+
+        cout << "Key Found: " << keys.at(highestGradeIndex) << endl;
+
     } else if (decision == 'I') {
         cout << "Enter key or enter 'E' to END program: ";
         cin >> key;
@@ -210,7 +247,6 @@ int main() {
                 //cout << keyLetterAssignedNum << endl;
             }
             cout << endl << endl;
-            //cout << endl << endl;
             cout << "Enter key:";
             cin >> key;
         }
