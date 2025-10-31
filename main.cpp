@@ -17,7 +17,7 @@
  *      - This website that decrypts vigenere ciphered text so that I can figure out what it should look like at least so that I can
  *        try and figure out what is wrong with my program's logic: https://www.boxentriq.com/code-breaking/vigenere-cipher
  *
- *      - This site to get real english words to compare with the decrypted text
+ *      - This site to get real english words to compare with the decrypted text: https://www.mit.edu/~ecprice/wordlist.10000
  *      - This stackOverflow thread helps use the sleep_for() function: https://stackoverflow.com/questions/4184468/sleep-for-milliseconds
  *
 
@@ -73,10 +73,26 @@ int main()
          * 3.only for letter if is not letter, no change
          * 4.randkey create based on length of plaintext also only for letter, it could exactly match we don't even need to use loop to perform key multiple times * 5.key point is convert everything in uppercase letter even key and char enchar *6.using multiple way to encryption
          */
+
         int choice;
-        cout << "if u want to Encryption type 1 and if u want to decryption type 2" << endl;
-        cin >> choice;
-        cin.ignore(); // learn this from zybook just in order to aviod get " " when I use getline next
+        bool isChoice = false;
+
+
+        while (isChoice == false) {
+            cout << "If you want to perform Encryption type [1] and if you want to  perform Decryption type [2]:";
+            cin >> choice;
+
+            if (choice == 1) {
+                isChoice = true;
+            } else if (choice == 2) {
+                isChoice = true;
+            } else {
+                cout << "* Please enter a valid choice" << endl;
+            }
+
+            cin.ignore(); // learn this from zybook just in order to aviod get " " when I use getline next
+        }
+
         vector<string> keytext;
         vector<char> ciphertext;
         vector<int> letterfre(26, 0);
@@ -86,10 +102,14 @@ int main()
             string randkey = "";
             char k, c;
             int userseed;
-            cout << "Please enter the content you want to encryption :" << endl;
+            cout << "Please enter the content you want to encrypt: " << endl;
             getline(cin, plaintext);
-            cout << "pleause enter the seed u want to use :";
+
+            cout << "Please enter the seed(int) you want to use for encryption: ";
             cin >> userseed;
+            cout << endl;
+
+
             srand(time(0) + userseed);
             int textlength = plaintext.size();
             vector<char> encrytiontext;
@@ -109,18 +129,12 @@ int main()
                 { // only encrypto for letter
                     if (isupper(plaintext[i]))
                     {
-                        char enchar = ((plaintext[i] - 'A') + (randkey[keyindex] -
-                                                               'A')) %
-                                          26 +
-                                      'A'; // if the plaintext is not letter we could preserve it self encrytiontext.push_back(enchar);
+                        char enchar = ((plaintext[i] - 'A') + (randkey[keyindex] - 'A')) % 26 + 'A'; // if the plaintext is not letter we could preserve it self encrytiontext.push_back(enchar);
                         keyindex++;
                     }
                     else
                     {
-                        char enchar = ((plaintext[i] - 'a') + (randkey[keyindex] -
-                                                               'A')) %
-                                          26 +
-                                      'a'; // if the plaintext is not letter we could preserve it self encrytiontext.push_back(enchar);
+                        char enchar = ((plaintext[i] - 'a') + (randkey[keyindex] - 'A')) % 26 + 'a'; // if the plaintext is not letter we could preserve it self encrytiontext.push_back(enchar);
                         keyindex++;
                     }
                 }
@@ -148,19 +162,19 @@ int main()
                 encrytiontext.at(i) = encrytiontext.at(N - i - 1);
                 encrytiontext.at(N - 1 - i) = temp3;
             }
-            cout << "Encryption content would be : ";
+            cout << "Encryption content would be: ";
             for (int i = 0; i < textlength; i++)
             {
                 cout << encrytiontext.at(i);
             }
             cout << endl;
-            cout << "DO u want to get the origin text? if you want input 1 and key else 2" << endl;
+            cout << "Do you want to get the origin text? If you want input 1 and key else 2" << endl;
             int choice2;
             string key;
             cin >> choice2;
             if (choice2 == 1)
             {
-                cout << "please tell me the key " << endl;
+                cout << "Please tell me the key " << endl;
                 cin >> key;
                 int keyindex = 0;
                 if (key == randkey)
@@ -173,7 +187,7 @@ int main()
                     int P = deencrytiontext.size();
                     for (size_t i = 0; i < P / 2; i++)
                     { // reverse the sequence to make it more complex
-                        int temp4 = deencrytiontext.at(i);
+                        char temp4 = deencrytiontext.at(i);
                         deencrytiontext.at(i) = deencrytiontext.at(P - i - 1);
                         deencrytiontext.at(P - 1 - i) = temp4;
                     }
@@ -214,7 +228,7 @@ int main()
                 }
                 else
                 {
-                    cout << "it's not right key dude,you are not the bob" << endl;
+                    cout << "It's not right key dude, you are not the bob" << endl;
                 }
             }
         }
