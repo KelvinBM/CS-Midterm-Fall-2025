@@ -10,6 +10,15 @@
  *            the given 'keys.txt' file was opened or not(NEED TO IMPLEMENT): https://stackoverflow.com/questions/30221785/reading-from-text-file-is-not-working-c
  *
  *      - This video helped me further understand the mathematics behind the Vigenere Cypher: https://www.youtube.com/watch?v=RCkGauRMs2A
+ *      - This video helped me understand that the alphabet's letters will not be directly used to shift rather than
+ *        their corresponding value: https://www.youtube.com/watch?v=T3r-3twsG8s
+ *          - Ex: A -> 0 | B -> 1 (a maps to zero; b maps to 1; and so on...)
+ *
+ *      - This website that decrypts vigenere ciphered text so that I can figure out what it should look like at least so that I can
+ *        try and figure out what is wrong with my program's logic: https://www.boxentriq.com/code-breaking/vigenere-cipher
+ *
+ *
+ *
  */
 
 
@@ -30,7 +39,7 @@ int main() {
     string currWord;
     bool isDecrypted = false;
 
-    vector<int> keyShifts;
+    vector<int> keyShiftLetters;
     vector<char> uniqueLetters;
     vector<char> lettersToDecryptOnly;
     vector<int> letterRate;
@@ -41,11 +50,16 @@ int main() {
     int currRate;
 
     char shiftedLetter;
-    int keyToShiftBy;
+    char keyLetterToShiftBy;
+    int keyLetterCorrespondingShift;
+    int indexOfKeyLetter;
 
     int i;
     int j;
     int k;
+
+    string alphabet;
+    vector<int> alphabetCorrespondingShift;
 
     // FILE WITH ENCRYPTED TEXT //
     string lineText;
@@ -77,6 +91,14 @@ int main() {
         }
     }
 
+    for (i = 0, j = 'A'; j <= 'Z'; i++, j++) {
+        alphabet.push_back(j);
+        alphabetCorrespondingShift.push_back(i);
+
+        // cout << alphabet.at(i) << "  " << alphabetCorrespondingShift.at(i);
+        // cout << endl;
+    }
+
     // letter comparisons
     // DECRYPTING //
     cout << "Letter Rates:" << endl;
@@ -100,7 +122,7 @@ int main() {
     //////////////////////////////////////////////////////////////////////////////////////////
     ///                                     DECRPYTING                                     ///
     //////////////////////////////////////////////////////////////////////////////////////////
-    /*
+
     cout << "Would you like to input the key or read multiple keys from a text file?" << endl;
     cout << "Enter [I] to input key or [R] to read keys: ";
     cin >>decision;
@@ -112,33 +134,42 @@ int main() {
     if (decision == 'R') {
         ifstream keysFile("C:\\Users\\Kelvi\\Desktop\\CCNY\\CSC 103 - Computer Science\\Projects\\Cryptography\\text\\keys.txt");
 
+        // getting the keys to try out //
         while (getline(keysFile, lineText))
         {
             // cout << lineText << '\n';
             keys.push_back(lineText + '\n');
         }
         keysFile.close();
-
+        cout << endl << endl << keys.size() << endl << endl;
         for (k = 0; k < keys.size(); k++) {
             key = keys.at(k);
 
-            keyShifts.resize(key.size());
+            keyShiftLetters.resize(key.size());
             for (i = 0; i < key.size(); i++) {
                 if (islower(key.at(i))) {
-                    keyShifts.at(i) = (toupper(key.at(i)));
+                    keyShiftLetters.at(i) = (toupper(key.at(i)));
                 } else {
-                    keyShifts.push_back(key.at(i));
+                    keyShiftLetters.at(i) = key.at(i);
                 }
-                //cout << keyShifts.at(i) << " ";
+                cout << (char)keyShiftLetters.at(i) << " ";
             }
-            cout << endl;
-
+            //cout << endl;
+            cout << "Current Key:  " << key << endl;
             // WORK ON DECRYPTING //
             for (i = 0; i < lettersToDecryptOnly.size(); i++) {
                 currLetter = lettersToDecryptOnly.at(i);
-                keyToShiftBy = keyShifts.at(i % key.size());
+                keyLetterToShiftBy = keyShiftLetters.at(i % key.size());
 
-                shiftedLetter = (((currLetter + 'A') - keyToShiftBy) % 26) + 'A';
+                indexOfKeyLetter = alphabet.find(keyLetterToShiftBy);
+                if (indexOfKeyLetter < 0) {
+                    continue;
+                }
+
+                keyLetterCorrespondingShift = alphabetCorrespondingShift.at(indexOfKeyLetter);
+                //cout << "" << indexOfKeyLetter << ", ";
+
+                shiftedLetter = (((currLetter - keyLetterCorrespondingShift) + 'A') % 26) + 'A';
                 cout << shiftedLetter;
                 //cout << keyToShiftByIndex << endl;
             }
@@ -150,12 +181,12 @@ int main() {
         cin >> key;
 
         while (key != "E") {
-            keyShifts.resize(key.size());
+            keyShiftLetters.resize(key.size());
             for (i = 0; i < key.size(); i++) {
                 if (islower(key.at(i))) {
-                    keyShifts.at(i) = (toupper(key.at(i)));
+                    keyShiftLetters.at(i) = (toupper(key.at(i)));
                 } else {
-                    keyShifts.push_back(key.at(i));
+                    keyShiftLetters.push_back(key.at(i));
                 }
                 //cout << keyShifts.at(i) << " ";
             }
@@ -164,10 +195,9 @@ int main() {
             // WORK ON DECRYPTING //
             for (i = 0; i < lettersToDecryptOnly.size(); i++) {
                 currLetter = lettersToDecryptOnly.at(i);
+                keyLetterToShiftBy = keyShiftLetters.at(i % key.size());
 
-                keyToShiftBy = keyShifts.at(i % key.size());
-
-                shiftedLetter = (((currLetter - 'A') + keyToShiftBy) % 26) + 'A';
+                shiftedLetter = (((currLetter - 'A') + keyLetterCorrespondingShift) % 26) + 'A';
                 cout << shiftedLetter;
                 //cout << keyToShiftByIndex << endl;
             }
@@ -176,9 +206,9 @@ int main() {
             cin >> key;
         }
     }
-    */
+
     // shift based on letter rate
-    for (i = 0; i < letterRate.size(); i++) {
+    /* for (i = 0; i < letterRate.size(); i++) {
         currRate = letterRate.at(i);
         for (j = 0; j < lettersToDecryptOnly.size(); j++) {
             if (j % currRate == 0) {
@@ -189,7 +219,7 @@ int main() {
         }
         cout << endl;
         cout << endl;
-    }
+    } */
 
 
     return 0;
