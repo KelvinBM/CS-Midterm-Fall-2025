@@ -37,20 +37,20 @@ using namespace chrono_literals;
 int main() {
 
     int decisionOfProgram;
-    int isDecision = false;
+    int isDecisionIntro = false;
 
     cout << "What would you like to do today:" << endl;
     cout << "\tEnter [1] to Encrypt" << endl;
     cout << "\tEnter [2] to Decrypt" << endl;
 
-    while (isDecision == false) {
+    while (isDecisionIntro == false) {
         cout << endl << "Your Choice: ";
         cin >> decisionOfProgram;
 
         if (decisionOfProgram == 1) {
-            isDecision = true;
+            isDecisionIntro = true;
         } else if (decisionOfProgram == 2) {
-            isDecision = true;
+            isDecisionIntro = true;
         } else {
             cout << "* Please enter a valid choice" << endl;
         }
@@ -178,8 +178,8 @@ int main() {
 
         cout << "Would you like to input the key or read multiple keys from a text file?" << endl;
 
-        isDecision = false;
-        while (isDecision == false) {
+        isDecisionIntro = false;
+        while (isDecisionIntro == false) {
             cout << "Enter [I] to input key or [R] to read keys: ";
             cin >>decision;
 
@@ -188,9 +188,9 @@ int main() {
             }
 
             if (decision == 'R') {
-                isDecision = true;
+                isDecisionIntro = true;
             } else if (decision == 'I') {
-                isDecision = true;
+                isDecisionIntro = true;
             } else {
                 cout << "* Please enter a valid choice" << endl;
             }
