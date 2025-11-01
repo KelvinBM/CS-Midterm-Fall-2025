@@ -89,13 +89,17 @@ int main() {
             getline(cin, plaintext);
             cout << "Please enter the seed you want to use:";
             cin >> userseed;
-            srand(time(0) + userseed);
+            //srand(time(0) + userseed);// replaced with time based random number below
+
+            clock_t time = clock();
+            int randomNum = abs(((time - 3245679890856789121) / (time * userseed)) % 26);
             int textlength = plaintext.size();
             vector<char> encrytiontext;
             for (int i = 0; i < textlength; i++) {
                 if (isalpha(plaintext[i])) {
                     //only get the key for letter
-                    k = ((textlength * 8 + (rand() % 26) * i * i)) % 26 + 'A';
+                    //k = ((textlength * 8 + (rand() % 26) * i * i)) % 26 + 'A';
+                    k = ((textlength * 8 + (randomNum % 26) * i * i)) % 26 + 'A';
                     randkey += k;
                 }
             }
@@ -105,7 +109,7 @@ int main() {
                 if (isalpha(plaintext[i])) {
                     //only encrypto for letter
                     if (isupper(plaintext[i])) {
-                        char enchar = ((plaintext[i] - 'A') + (randkey[keyindex] - 'A')) % 26 + 'A';
+                        char enchar = ((plaintext[i] - 'A') + (randkey[keyindex] - 'A') + 'A') % 26 + 'A';
                         //if the plaintext is not letter we could preserve it self
                         encrytiontext.push_back(enchar);
                         keyindex++;
