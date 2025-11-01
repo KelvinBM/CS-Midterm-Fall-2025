@@ -92,7 +92,7 @@ int main() {
             //srand(time(0) + userseed);// replaced with time based random number below
 
             clock_t time = clock();
-            int randomNum = abs(((time - 3245679890856789121) / (time * userseed)) % 26);
+            int randomNum = abs(((time - 3245679890856789121) / (time * userseed) + userseed * 14) % 26) + 'A';
             int textlength = plaintext.size();
             vector<char> encrytiontext;
             for (int i = 0; i < textlength; i++) {
@@ -114,8 +114,7 @@ int main() {
                         encrytiontext.push_back(enchar);
                         keyindex++;
                     } else {
-                        char enchar = ((plaintext[i] - 'a') + (randkey[keyindex] -
-                                                               'A')) % 26 + 'a';
+                        char enchar = ((plaintext[i] - 'a') + (randkey[keyindex] - 'A')) % 26 + 'a';
                         //if the plaintext is not letter we could preserve it self
                         encrytiontext.push_back(enchar);
                         keyindex++;
