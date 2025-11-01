@@ -293,7 +293,7 @@ int main() {
             currRate = currLetterCounter; /// (double)sentence.length(); // for testing
             letterRate.push_back(currRate);
 
-            // cout << "  " << currLetter << ": " << letterRate.at(i) << endl;
+            cout << "  " << currLetter << ": " << letterRate.at(i) << endl;
         }
         cout << endl;
 
