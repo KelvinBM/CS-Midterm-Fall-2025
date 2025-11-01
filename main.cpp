@@ -197,7 +197,6 @@ int main() {
                     cout << "It's not right key dude, you are not THE Bob" << endl;
                 }
             }
-            return 0;
         }
     } else if (decisionOfProgram == 2) {
         char decision;
